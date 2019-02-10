@@ -7,7 +7,9 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flaskr.db import get_db
 
 
-# Create a Blueprint named auth
+# Create a Blueprint named auth. Blueprints organise linked/related functions
+# e.g. this module will add authorisation functionality to this app, including
+# login, logout, checking user is authenticated, getting the authenticated user
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
@@ -37,7 +39,13 @@ def register():
             db.execute('INSERT INTO (username, password) VALUES (?, ?)',
                        (username, generate_password_hash(password)))
             db.commit()  # This effectively flushes the db
-            return redirect(url_for('auth_login'))
+            return redirect(url_for('auth.login'))
+            # url_for takes an endpoint, which is based on the function name
+            # generating the view. Args can be passed. e.g.:
+            #   url_for('hello', who='world')
+            # hello is the function; who is an argument; world is value for arg
+            #
+            # With blueprints, the name of the blueprint is prepended
 
         flash(error)
         # Flash is a way to render simple messages in case of, for example, an
@@ -91,3 +99,24 @@ def load_logged_in_user():
     else:
         g.user = get_db().execute('SELECT * FROM user WHERE id = ?',
                                   (user_id,)).fetchone()
+
+
+# Log user out of session - just clear the session cookie (removes user_id)
+@bp.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
+
+
+# We need to know if the user is logged in when, e.g. editing
+# This decorator will check for a logged in user and redirect to the login page
+# if none is found. If a user is logged in, return the requested view
+def login_required(view):
+    @functools.wrap(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for('auth.login'))
+
+        return view(**kwargs)
+
+    return wrapped_view
