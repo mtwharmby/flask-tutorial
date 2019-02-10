@@ -5,7 +5,6 @@ from werkzeug.exceptions import abort
 from flaskr.auth import login_required
 from flaskr.db import get_db
 
-import sys
 
 bp = Blueprint('blog', __name__)  # No url_prefix, so all views relative to /
 
@@ -25,7 +24,6 @@ def index():
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
 def create():
-    print('Method: {}'.format(request.method), file=sys.stderr)
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
