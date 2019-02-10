@@ -60,7 +60,12 @@ def create_app(test_config=None):
     db.init_app(app)
 
     # Import and register blueprints
-    from . import auth
+    from . import auth, blog
     app.register_blueprint(auth.bp)
+    app.register_blueprint(blog.bp)
+    # blog blueprint has no url_prefix, so index view in there provides index
+    # view for whole app. url_rule below ensures mapping of index endpoint -
+    # referenced in login/register to blog view (route defined as '/')
+    app.add_url_rule('/', endpoint='index')
 
     return app
