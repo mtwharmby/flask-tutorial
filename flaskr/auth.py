@@ -36,7 +36,7 @@ def register():
 
         if error is None:
             # Assuming username/password are OK, put them into the db
-            db.execute('INSERT INTO (username, password) VALUES (?, ?)',
+            db.execute('INSERT INTO user (username, password) VALUES (?, ?)',
                        (username, generate_password_hash(password)))
             db.commit()  # This effectively flushes the db
             return redirect(url_for('auth.login'))
