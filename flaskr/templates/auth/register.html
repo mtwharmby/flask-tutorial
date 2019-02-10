@@ -1,0 +1,20 @@
+<!-- Placed in directory similar to naming of Blueprint -->
+
+{% extends 'base.html' %} <!-- Replace fields in base.html -->
+
+{% block header %}
+  <h1>{% block title %}Register{% endblock %}</h1>
+  <!-- This pattern ensures header + title are same, and declared once -->
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="username">Username</label>
+    <input name="username" id="username" required>
+    <!-- Required prevents submission without some value entered
+         This shouldn't replace validation in code though...!-->
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password" required>
+    <input type="submit" value="Register">
+  </form>
+{% endblock %}
