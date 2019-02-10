@@ -112,7 +112,7 @@ def logout():
 # This decorator will check for a logged in user and redirect to the login page
 # if none is found. If a user is logged in, return the requested view
 def login_required(view):
-    @functools.wrap(view)
+    @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
             return redirect(url_for('auth.login'))
